@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const CrustSchema = new Schema({
   crust: { type: String, required: true },
+  price: { type: String, required: true },
   is_active: { type: Boolean, default: true },
   created_at: { type: Date, required: true },
 });

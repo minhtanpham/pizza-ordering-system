@@ -2,13 +2,13 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const FlavourSchema = new Schema({
-  flavour: { type: String, required: true },
+const ToppingSchema = new Schema({
+  topping: { type: String, required: true },
   price: { type: String, required: true },
   is_active: { type: Boolean, default: true },
   created_at: { type: Date, required: true },
 });
 
-FlavourSchema.index({ flavour: 'text' });
+ToppingSchema.index({ topping: 'text' });
 
-export default FlavourSchema;
+export default ToppingSchema;
