@@ -23,7 +23,7 @@ mongoose.set('useFindAndModify', false);
 // connection to Redis database
 bluebird.promisifyAll(redis);
 const redisClient = redis.createClient(REDIS_DB_URL, REDIS_DB_PORT);
-redisClient.on('connect', function() {
+redisClient.on('connect', function () {
   console.log('Redis client connected');
 });
 redisClient.on('error', function (err) {

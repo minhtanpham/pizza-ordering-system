@@ -1,21 +1,24 @@
 import React, { Suspense, lazy } from 'react';
-import './i18n';
 import {
   Router,
   Switch,
   Route,
 } from 'react-router-dom';
-import history from './utils/history';
+import { Spin } from 'antd';
 
-// Page Wrapper
+import history from './utils/history';
 import PrivateRoute from './components/privateRoute';
 import './public/app.css';
+import HomePage from './components/HomePage/Homepage';
+
+const DashboardPage = lazy(() => import('./components/DashboardPage/DashboardPage'));
 
 const App = () => (
-  <Suspense fallback={<LoadingSpinner type="center" />}>
+  <Suspense fallback={<Spin />}>
     <Router history={history}>
       <Switch>
-        <Route exact path="/" component={LoginPage} />
+        <Route exact path="/" component={HomePage} />
+        <PrivateRoute exact path="/dashboard" component={DashboardPage} />
       </Switch>
     </Router>
   </Suspense>

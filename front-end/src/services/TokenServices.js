@@ -3,7 +3,6 @@ const sessionStr = sessionStorage || window.sessionStorage;
 const storageAccessToken = 'AccessToken';
 const storageRefreshToken = 'RefreshToken';
 let accessToken = null;
-let refreshToken = null;
 
 export const setAccessToken = (tokenString, onlySession) => {
   try {
@@ -21,7 +20,7 @@ export const setAccessToken = (tokenString, onlySession) => {
       accessToken = tokenString;
     }
   } catch (error) {
-    console.log('services.User.token.setAccessToken() - ', error);
+    // console.log('services.User.token.setAccessToken() - ', error);
   }
 };
 
@@ -35,7 +34,7 @@ export const getAccessToken = () => {
     }
     return null;
   } catch (error) {
-    console.log('services.User.token.getAccessToken() - ', error);
+    // console.log('services.User.token.getAccessToken() - ', error);
     return error;
   }
 };

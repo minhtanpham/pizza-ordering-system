@@ -4,22 +4,19 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import { Spin } from 'antd';
 
-import MasterLayout from './masterLayout';
-import LoadingSpinner from '../loadingSpinner';
-import { getAccessToken } from '../../services/TokenService';
-import { isEmpty } from '../../utils/index';
+// import { getAccessToken } from '../services/TokenServices';
+// import { isEmpty } from '../utils/index';
 
 function PrivateRoute({ component: Component, ...rest }) {
   return (
     <Route
       {...rest}
-      render={props => (!isEmpty(getAccessToken()) ? (
-        <MasterLayout>
-          <Suspense fallback={<LoadingSpinner type="top" />}>
-            <Component {...props} />
-          </Suspense>
-        </MasterLayout>
+      render={props => (true ? (
+        <Suspense fallback={<Spin />}>
+          <Component {...props} />
+        </Suspense>
       ) : (
         <Redirect
           to={{
@@ -28,7 +25,7 @@ function PrivateRoute({ component: Component, ...rest }) {
           }}
         />
       ))
-        }
+      }
     />
   );
 }

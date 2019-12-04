@@ -1,0 +1,60 @@
+.ant-layout-header {
+  background-color: #8E0000;
+}
+
+.ant-menu-horizontal {
+  background-color: #8E0000;
+  color: #fff;
+}
+
+.ant-menu-horizontal>.ant-menu-item-selected {
+  color: #FFBC00;
+  border-bottom: 2px solid #FFBC00;
+}
+
+.ant-menu-horizontal>.ant-menu-item-active {
+  color: #FFBC00!important;
+  border-bottom: 2px solid #FFBC00!important;
+}
+
+.ant-layout-footer {
+  background-color: #FF8800;
+  color: #000;
+}
+
+.ant-layout {
+  background-color: #FF8800;
+  color: #000;
+}
+
+.slider-item {
+  padding: 0px;
+  height: 500px;
+  overflow: hidden;
+}
+
+.slider-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-card-pizza {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.home-order-button {
+  background-color: #DF3636;
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+  color: #fff
+}
+
+.ant-btn:hover {
+  background-color: #b30909;
+  border: none;
+  color: #fff;
+}

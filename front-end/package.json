@@ -61,7 +61,8 @@
     "react-i18next": "^8.3.5",
     "react-responsive": "^8.0.1",
     "react-router": "^5.0.1",
-    "react-router-dom": "^5.0.1"
+    "react-router-dom": "^5.0.1",
+    "react-slick": "^0.25.2"
   },
   "author": "",
   "license": "ISC"
