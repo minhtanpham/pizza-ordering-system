@@ -12,8 +12,10 @@ import _ from 'lodash';
 import { userLogin } from '../../services/UserServices';
 import {
   setAccessToken,
+  getAccessToken,
   setRefreshToken,
 } from '../../services/TokenServices';
+import { isEmpty } from '../../utils/index';
 
 import './LoginPage.css';
 
@@ -21,6 +23,13 @@ class LoginPage extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    const { history } = this.props;
+    if (!isEmpty(getAccessToken())) {
+      history.push('/dashboard');
+    }
   }
 
   handleSubmit(e) {

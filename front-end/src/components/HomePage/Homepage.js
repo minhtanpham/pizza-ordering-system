@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Link } from 'react-router-dom';
 
 import './homepage.css';
 import PizzaCard from '../PizzaCard/PizzaCard';
@@ -131,8 +132,8 @@ class HomePage extends Component {
             defaultSelectedKeys={['2']}
             style={{ lineHeight: '64px' }}
           >
-            <Menu.Item key="1">Home</Menu.Item>
-            <Menu.Item key="3">Admin Dashboard</Menu.Item>
+            <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
+            <Menu.Item key="3"><Link to="/login">Admin Dashboard</Link></Menu.Item>
           </Menu>
         </Header>
         <Content style={{ padding: '50px', minHeight: 'calc(100vh - 133px)' }}>

@@ -11,6 +11,9 @@ import {
   message,
 } from 'antd';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
 import './Dashboard.css';
 import CreatePizza from '../CreatePizza/CreatePizza';
@@ -19,6 +22,7 @@ import Size from '../Size/Size';
 import Crust from '../Crust/Crust';
 import Topping from '../Topping/Topping';
 import { getListOrders } from '../../services/OrderServices';
+import { setRefreshToken, setAccessToken } from '../../services/TokenServices';
 
 const proccessData = (rawData) => {
   let result = [];
@@ -87,6 +91,14 @@ class DashboardPage extends Component {
     });
   }
 
+  logout() {
+    const { history } = this.props;
+    setRefreshToken('');
+    setAccessToken('');
+    message.success('Logout successful');
+    history.push('/');
+  }
+
   render() {
     const { field } = this.state;
     const { Header, Content, Footer } = Layout;
@@ -100,8 +112,9 @@ class DashboardPage extends Component {
             defaultSelectedKeys={['2']}
             style={{ lineHeight: '64px' }}
           >
-            <Menu.Item key="1">Home</Menu.Item>
-            <Menu.Item key="3">Admin Dashboard</Menu.Item>
+            <Menu.Item key="1"><Link to="/">Home</Link></Menu.Item>
+            <Menu.Item key="2"><Link to="/login">Admin Dashboard</Link></Menu.Item>
+            <Menu.Item key="3" onClick={() => this.logout()}>Log out</Menu.Item>
           </Menu>
         </Header>
         <Content style={{ padding: '50px', minHeight: 'calc(100vh - 133px)' }}>
@@ -139,4 +152,8 @@ class DashboardPage extends Component {
   }
 }
 
-export default DashboardPage;
+DashboardPage.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+};
+
+export default withRouter(DashboardPage);
