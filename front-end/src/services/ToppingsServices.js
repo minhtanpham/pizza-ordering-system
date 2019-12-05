@@ -1,10 +1,10 @@
-import { privateRequest } from './HttpServices';
+import { privateRequest, publicRequest } from './HttpServices';
 
 const getAllToppingsURL = 'toppings';
 const createNewToppingsURL = 'toppings';
 const deleteToppingsURL = 'toppings';
 
-export const getListToppings = (limit, offset) => privateRequest(`${getAllToppingsURL}?limit=${limit}&offset=${offset}`, {
+export const getListToppings = (limit, offset) => publicRequest(`${getAllToppingsURL}?limit=${limit}&offset=${offset}`, {
   method: 'GET',
 });
 

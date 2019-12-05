@@ -1,10 +1,10 @@
-import { privateRequest } from './HttpServices';
+import { privateRequest, publicRequest } from './HttpServices';
 
 const getAllSizesURL = 'sizes';
 const createNewSizesURL = 'sizes';
 const deleteSizessURL = 'sizes';
 
-export const getListSizes = (limit, offset) => privateRequest(`${getAllSizesURL}?limit=${limit}&offset=${offset}`, {
+export const getListSizes = (limit, offset) => publicRequest(`${getAllSizesURL}?limit=${limit}&offset=${offset}`, {
   method: 'GET',
 });
 

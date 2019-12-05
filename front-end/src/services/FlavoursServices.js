@@ -1,10 +1,10 @@
-import { privateRequest } from './HttpServices';
+import { privateRequest, publicRequest } from './HttpServices';
 
 const getAllFlavoursURL = 'flavours';
 const createNewFlavoursURL = 'flavours';
 const deleteFlavoursURL = 'flavours';
 
-export const getListFlavours = (limit, offset) => privateRequest(`${getAllFlavoursURL}?limit=${limit}&offset=${offset}`, {
+export const getListFlavours = (limit, offset) => publicRequest(`${getAllFlavoursURL}?limit=${limit}&offset=${offset}`, {
   method: 'GET',
 });
 

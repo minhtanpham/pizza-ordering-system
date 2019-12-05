@@ -1,10 +1,10 @@
-import { privateRequest } from './HttpServices';
+import { privateRequest, publicRequest } from './HttpServices';
 
 const getAllCrustsURL = 'crusts';
 const createNewCrustsURL = 'crusts';
 const deleteCrustsURL = 'crusts';
 
-export const getListCrusts = (limit, offset) => privateRequest(`${getAllCrustsURL}?limit=${limit}&offset=${offset}`, {
+export const getListCrusts = (limit, offset) => publicRequest(`${getAllCrustsURL}?limit=${limit}&offset=${offset}`, {
   method: 'GET',
 });
 

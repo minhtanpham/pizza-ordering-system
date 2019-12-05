@@ -6,14 +6,14 @@ import {
 } from 'react-router-dom';
 import { Spin } from 'antd';
 
-// import { getAccessToken } from '../services/TokenServices';
-// import { isEmpty } from '../utils/index';
+import { getAccessToken } from '../services/TokenServices';
+import { isEmpty } from '../utils/index';
 
 function PrivateRoute({ component: Component, ...rest }) {
   return (
     <Route
       {...rest}
-      render={props => (true ? (
+      render={props => (!isEmpty(getAccessToken()) ? (
         <Suspense fallback={<Spin />}>
           <Component {...props} />
         </Suspense>
