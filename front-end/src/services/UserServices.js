@@ -1,15 +1,14 @@
-import { publicRequest, privateRequest } from './HttpService';
-import config from '../configs/environments';
+import { publicRequest } from './HttpServices';
 
-const authPrefixURL = `/api/oportal/${config.apiVersion}`;
-const userPrefixURL = `/api/sales-crm/${config.apiVersion}`;
-const authAzurePrefixUrl = `/api/azure/${config.apiVersion}`;
-/*
-| Authentication and get accesstoken of auth user
-| ------------------------------------------------------
-| GET /users/login
-*/
-export const userLogin = data => publicRequest(`${authPrefixURL}/users/login`, {
+const loginURL = 'auth/login';
+
+// /api/auth/login
+export const userLogin = data => publicRequest(loginURL, {
+  method: 'POST',
+  data,
+});
+
+export const userLogout = data => publicRequest(loginURL, {
   method: 'POST',
   data,
 });

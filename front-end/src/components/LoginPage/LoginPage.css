@@ -1,0 +1,18 @@
+.container {
+  width: 300px;
+  margin: 50px auto;
+}
+
+.login-form-button {
+  background-color: #DF3636;
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+  color: #fff
+}
+
+.ant-btn:hover {
+  background-color: #b30909;
+  border: none;
+  color: #fff;
+}

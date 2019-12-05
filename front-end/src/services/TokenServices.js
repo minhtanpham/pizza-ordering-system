@@ -26,9 +26,7 @@ export const setAccessToken = (tokenString, onlySession) => {
 
 export const getAccessToken = () => {
   try {
-    if (accessToken) {
-      return accessToken;
-    } if (storage) {
+    if (storage) {
       accessToken = storage.getItem(storageAccessToken);
       return accessToken;
     }

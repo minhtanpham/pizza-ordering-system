@@ -13,7 +13,7 @@ export default () => {
   const Flavour = mongoose.model('Flavour', FlavourSchema);
   const CreateFlavourJoiSchema = Joi.object().keys({
     flavour: Joi.string().required(),
-    price: Joi.string().required(),
+    price: Joi.number().required(),
   });
 
   api.post('/', asyncHandler(async (req, res) => {
@@ -26,7 +26,7 @@ export default () => {
           message: unescapeSlashes(result.error.message),
         });
       }
-      const flavourFinded = await Flavour.findOne({ flavour }).lean().exec();
+      const flavourFinded = await Flavour.findOne({ flavour, is_active: true }).lean().exec();
       if (!isEmpty(flavourFinded)) {
         // flavour already in db
         return res.status(409).json({
@@ -89,9 +89,8 @@ export default () => {
   api.get('/', asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = parseInt(req.query.offset, 10) || 0;
-    const flavour = req.query.flavour || '';
     try {
-      let response = await Flavour.find({ $text: {$search: flavour}, is_active: true }).skip(offset).limit(limit).exec();
+      let response = await Flavour.find({ is_active: true }).skip(offset).limit(limit).exec();
       if (isEmpty(response)) {
         return res.status(204).json({
           success: true,
