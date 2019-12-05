@@ -7,6 +7,7 @@ import 'babel-polyfill';
 
 import CrustSchema from '../schema/Crust';
 import { isEmpty, unescapeSlashes } from '../utils';
+import { checkToken } from '../middlewares/index';
 
 export default () => {
   let api = Router();
@@ -17,7 +18,7 @@ export default () => {
     price: Joi.number().required(),
   });
 
-  api.post('/', asyncHandler(async (req, res) => {
+  api.post('/', checkToken, asyncHandler(async (req, res) => {
     const { crust, price } = req.body;
     try {
       const result = await CreateCrustJoiSchema.validate(req.body);
@@ -62,7 +63,7 @@ export default () => {
   }));
 
   // get detail of single crust
-  api.get('/:crustid', asyncHandler(async (req, res) => {
+  api.get('/:crustid', checkToken, asyncHandler(async (req, res) => {
     const crust_id = req.params.crustid;
     try {
       let response = await Crust.find({ _id: crust_id, is_active: true }).exec();
@@ -113,7 +114,7 @@ export default () => {
   }));
 
   // inactive specific crust
-  api.delete('/:crustid/inactive', asyncHandler(async (req, res) => {
+  api.delete('/:crustid/inactive', checkToken, asyncHandler(async (req, res) => {
     const crust_id = req.params.crustid;
     if (isEmpty(crust_id)) return res.status(400).json({
       success: false,
@@ -141,7 +142,7 @@ export default () => {
   }));
 
    // update detail of crust
-   api.put('/:crustid', asyncHandler(async (req, res) => {
+   api.put('/:crustid', checkToken, asyncHandler(async (req, res) => {
     const crust_id = req.params.crustid;
     if (isEmpty(crust_id)) return res.status(400).json({
       success: false,

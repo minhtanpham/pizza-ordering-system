@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import React, { Component } from 'react';
 import {
   Layout,
@@ -7,21 +8,83 @@ import {
   Form,
   Button,
   Select,
+  message,
+  Empty,
 } from 'antd';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import './homepage.css';
 import PizzaCard from '../PizzaCard/PizzaCard';
+import { getListFlavours } from '../../services/FlavoursServices';
+import { getListSizes } from '../../services/SizeServices';
+import { getListCrusts } from '../../services/CrustServices';
+import { getListToppings } from '../../services/ToppingsServices';
+import { getListPizzas } from '../../services/PizzaServices';
 
 const { Header, Content, Footer } = Layout;
 
 class HomePage extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      pizza: [],
+      flavours: [],
+      sizes: [],
+      crusts: [],
+      toppings: [],
+    };
+  }
+
+  componentDidMount() {
+    const promiseArray = [
+      getListFlavours(1000, 0),
+      getListSizes(1000, 0),
+      getListCrusts(1000, 0),
+      getListToppings(1000, 0),
+    ];
+    Promise.all(promiseArray).then((res) => {
+      this.setState({
+        flavours: _.get(res[0], 'data.data'),
+        sizes: _.get(res[1], 'data.data'),
+        crusts: _.get(res[2], 'data.data'),
+        toppings: _.get(res[3], 'data.data'),
+      });
+    }).catch(() => {
+      message.error('Failed to load list ingredients');
+    });
+    getListPizzas(100, 0).then((res) => {
+      this.setState({ pizza: _.get(res, 'data.data') });
+    }).catch(() => {
+      message.error('Failed when fetch list Pizza');
+    });
+  }
+
   handleSubmit(e) {
     const { form } = this.props;
+    const {
+      flavours,
+      sizes,
+      crusts,
+      toppings,
+    } = this.state;
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        const data = {
+          thumbnail: values.thumbnail,
+          flavour: flavours.filter(item => item._id === values.flavours)[0],
+          size: sizes.filter(item => item._id === values.sizes)[0],
+          crust: crusts.filter(item => item._id === values.crusts)[0],
+          topping: toppings.filter(item => item._id === values.toppings)[0],
+          price: 0,
+        };
+        data.price = (parseInt(data.flavour.price, 10)
+          + parseInt(data.size.price, 10)
+          + parseInt(data.crust.price, 10)
+          + parseInt(_.get(data, 'topping.price', 0), 10)).toString();
+        console.log(data);
       }
     });
   }
@@ -30,6 +93,13 @@ class HomePage extends Component {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     const { Option } = Select;
+    const {
+      pizza,
+      flavours,
+      sizes,
+      crusts,
+      toppings,
+    } = this.state;
     return (
       <Layout className="layout">
         <Header>
@@ -46,69 +116,76 @@ class HomePage extends Component {
         <Content style={{ padding: '50px', minHeight: 'calc(100vh - 133px)' }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
             <Row gutter={20}>
-              <Col span={12} className="list-card-pizza">
-                <PizzaCard />
-                <PizzaCard />
-                <PizzaCard />
-                <PizzaCard />
-              </Col>
+              {
+                pizza.length === 0 ? (
+                  <Col span={12}>
+                    <Empty />
+                  </Col>
+                ) : (
+                  <Col span={12} className="list-card-pizza">
+                    {
+                      pizza.map(item => <PizzaCard thumbnail={item.thumbnail} flavours={item.flavour.flavour} sizes={item.size.size} crusts={item.crust.crust} toppings={_.get(item, 'topping.topping', '')} price={item.price} />)
+                    }
+                  </Col>
+                )
+              }
               <Col span={12}>
                 <h1>Customize your pizza</h1>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                   <Form.Item label="Flavours">
-                    {getFieldDecorator('username', {
-                      rules: [{ required: true, message: 'Please input your username!' }],
+                    {getFieldDecorator('flavours', {
+                      rules: [{ required: true, message: 'Please choose flavours!' }],
                     })(
                       <Select
-                        placeholder="Select a person"
+                        placeholder="Select a flavours"
                       >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="tom">Tom</Option>
+                        {
+                          flavours.map(({ _id, flavour }) => <Option key={_id} value={_id}>{flavour}</Option>)
+                        }
                       </Select>,
                     )}
                   </Form.Item>
                   <Form.Item label="Size">
-                    {getFieldDecorator('password', {
-                      rules: [{ required: true, message: 'Please input your Password!' }],
+                    {getFieldDecorator('sizes', {
+                      rules: [{ required: true, message: 'Please choose your size' }],
                     })(
                       <Select
-                        placeholder="Select a person"
+                        placeholder="Select a size"
                       >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="tom">Tom</Option>
+                        {
+                          sizes.map(({ _id, size }) => <Option key={_id} value={_id}>{size}</Option>)
+                        }
                       </Select>,
                     )}
                   </Form.Item>
                   <Form.Item label="Crust">
-                    {getFieldDecorator('password', {
-                      rules: [{ required: true, message: 'Please input your Password!' }],
+                    {getFieldDecorator('crusts', {
+                      rules: [{ required: true, message: 'Please choose your crust!' }],
                     })(
                       <Select
-                        placeholder="Select a person"
+                        placeholder="Select a crust"
                       >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="tom">Tom</Option>
+                        {
+                          crusts.map(({ _id, crust }) => <Option key={_id} value={_id}>{crust}</Option>)
+                        }
                       </Select>,
                     )}
                   </Form.Item>
                   <Form.Item label="Topping">
-                    {getFieldDecorator('password', {
-                      rules: [{ required: true, message: 'Please input your Password!' }],
+                    {getFieldDecorator('toppings', {
+                      rules: [],
                     })(
                       <Select
-                        placeholder="Select a person"
+                        placeholder="Select a topping"
                       >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="tom">Tom</Option>
+                        {
+                          toppings.map(({ _id, topping }) => <Option key={_id} value={_id}>{topping}</Option>)
+                        }
                       </Select>,
                     )}
                   </Form.Item>
                   <Form.Item>
-                    <Button className="home-order-button">Create your Pizza!</Button>
+                    <Button htmlType="submit" className="home-order-button">Place your order!</Button>
                   </Form.Item>
                 </Form>
               </Col>

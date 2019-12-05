@@ -9,7 +9,7 @@
     ],
     "rules": {
         "linebreak-style": 0,
-        "no-underscore-dangle": [2, { "allow": [] }],
+        "max-len": 0,
         "react/jsx-filename-extension": [
             1,
             {

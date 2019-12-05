@@ -7,6 +7,7 @@ import 'babel-polyfill';
 
 import ToppingSchema from '../schema/Toppings';
 import { isEmpty, unescapeSlashes } from '../utils';
+import { checkToken } from '../middlewares/index';
 
 export default () => {
   let api = Router();
@@ -16,7 +17,7 @@ export default () => {
     price: Joi.number().required(),
   });
 
-  api.post('/', asyncHandler(async (req, res) => {
+  api.post('/', checkToken, asyncHandler(async (req, res) => {
     const { topping, price } = req.body;
     try {
       const result = await CreateToppingJoiSchema.validate(req.body);
@@ -61,7 +62,7 @@ export default () => {
   }));
 
   // get detail of single topping
-  api.get('/:toppingid', asyncHandler(async (req, res) => {
+  api.get('/:toppingid', checkToken, asyncHandler(async (req, res) => {
     const topping_id = req.params.toppingid;
     try {
       let response = await Topping.find({ _id: topping_id, is_active: true }).exec();
@@ -112,7 +113,7 @@ export default () => {
   }));
 
   // inactive specific topping
-  api.delete('/:toppingid/inactive', asyncHandler(async (req, res) => {
+  api.delete('/:toppingid/inactive', checkToken, asyncHandler(async (req, res) => {
     const topping_id = req.params.toppingid;
     if (isEmpty(topping_id)) return res.status(400).json({
       success: false,
@@ -140,7 +141,7 @@ export default () => {
   }));
 
    // update detail of topping
-   api.put('/:toppingid', asyncHandler(async (req, res) => {
+   api.put('/:toppingid', checkToken, asyncHandler(async (req, res) => {
     const topping_id = req.params.toppingid;
     if (isEmpty(topping_id)) return res.status(400).json({
       success: false,

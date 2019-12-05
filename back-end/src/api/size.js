@@ -7,6 +7,7 @@ import 'babel-polyfill';
 
 import SizeSchema from '../schema/Size';
 import { isEmpty, unescapeSlashes } from '../utils';
+import { checkToken } from '../middlewares/index';
 
 export default () => {
   let api = Router();
@@ -16,7 +17,7 @@ export default () => {
     price: Joi.number().required(),
   });
 
-  api.post('/', asyncHandler(async (req, res) => {
+  api.post('/', checkToken, asyncHandler(async (req, res) => {
     const { size, price } = req.body;
     try {
       const result = await CreateSizeJoiSchema.validate(req.body);
@@ -61,7 +62,7 @@ export default () => {
   }));
 
   // get detail of single size
-  api.get('/:sizeid', asyncHandler(async (req, res) => {
+  api.get('/:sizeid', checkToken, asyncHandler(async (req, res) => {
     const size_id = req.params.sizeid;
     try {
       let response = await Size.find({ _id: size_id, is_active: true }).exec();
@@ -112,7 +113,7 @@ export default () => {
   }));
 
   // inactive specific size
-  api.delete('/:sizeid/inactive', asyncHandler(async (req, res) => {
+  api.delete('/:sizeid/inactive', checkToken, asyncHandler(async (req, res) => {
     const size_id = req.params.sizeid;
     if (isEmpty(size_id)) return res.status(400).json({
       success: false,
@@ -140,7 +141,7 @@ export default () => {
   }));
 
    // update detail of size
-   api.put('/:sizeid', asyncHandler(async (req, res) => {
+   api.put('/:sizeid', checkToken, asyncHandler(async (req, res) => {
     const size_id = req.params.sizeid;
     if (isEmpty(size_id)) return res.status(400).json({
       success: false,

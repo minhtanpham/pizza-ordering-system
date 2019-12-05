@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import 'babel-polyfill';
-import { checkToken } from '../middlewares/index';
 
 import auth from './auth';
 import user from './user';
@@ -8,6 +7,7 @@ import flavours from './flavours';
 import sizes from './size';
 import crusts from './crust';
 import toppings from './toppings';
+import pizza from './pizza';
 
 export default (redisClient) => {
   let api = Router();
@@ -18,10 +18,11 @@ export default (redisClient) => {
   });
 
   api.use('/auth', auth(redisClient));
-  api.use('/flavours', checkToken, flavours(redisClient));
-  api.use('/crusts', checkToken, crusts(redisClient));
-  api.use('/toppings', checkToken, toppings(redisClient));
-  api.use('/sizes', checkToken, sizes(redisClient));
+  api.use('/flavours', flavours(redisClient));
+  api.use('/crusts', crusts(redisClient));
+  api.use('/toppings', toppings(redisClient));
+  api.use('/pizzas', pizza(redisClient));
+  api.use('/sizes', sizes(redisClient));
   api.use('/user', user());
 
   return api;

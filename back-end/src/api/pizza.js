@@ -12,17 +12,16 @@ export default () => {
   let api = Router();
   const Pizza = mongoose.model('Pizza', PizzaSchema);
   const CreatePizzaJoiSchema = Joi.object().keys({
-    name: Joi.string().required(),
     thumbnail: Joi.string().required(),
     flavour: Joi.object().required(),
     size: Joi.object().required(),
     crust: Joi.object().required(),
     topping: Joi.object(),
-    price: Joi.object().required(),
+    price: Joi.string().required(),
   });
 
   api.post('/', asyncHandler(async (req, res) => {
-    const { name, thumbnail, flavour, size, crust, topping, price } = req.body;
+    const { thumbnail, flavour, size, crust, topping, price } = req.body;
     try {
       const result = await CreatePizzaJoiSchema.validate(req.body);
       if (!isEmpty(result.error)) {
@@ -33,7 +32,6 @@ export default () => {
       }
       // create new flavour
       const data = {
-        name,
         thumbnail,
         flavour,
         size,

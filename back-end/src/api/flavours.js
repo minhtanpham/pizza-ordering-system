@@ -7,6 +7,7 @@ import 'babel-polyfill';
 
 import FlavourSchema from '../schema/Flavour';
 import { isEmpty, unescapeSlashes } from '../utils';
+import { checkToken } from '../middlewares/index';
 
 export default () => {
   let api = Router();
@@ -16,7 +17,7 @@ export default () => {
     price: Joi.number().required(),
   });
 
-  api.post('/', asyncHandler(async (req, res) => {
+  api.post('/', checkToken, asyncHandler(async (req, res) => {
     const { flavour, price } = req.body;
     try {
       const result = await CreateFlavourJoiSchema.validate(req.body);
@@ -112,7 +113,7 @@ export default () => {
   }));
 
   // inactive specific flavour
-  api.delete('/:flavourid/inactive', asyncHandler(async (req, res) => {
+  api.delete('/:flavourid/inactive', checkToken, asyncHandler(async (req, res) => {
     const flavour_id = req.params.flavourid;
     if (isEmpty(flavour_id)) return res.status(400).json({
       success: false,
@@ -140,7 +141,7 @@ export default () => {
   }));
 
    // update detail of flavours
-   api.put('/:flavourid', asyncHandler(async (req, res) => {
+   api.put('/:flavourid', checkToken, asyncHandler(async (req, res) => {
     const flavour_id = req.params.flavourid;
     if (isEmpty(flavour_id)) return res.status(400).json({
       success: false,
