@@ -14,7 +14,7 @@ export default () => {
 
   const CreateCrustJoiSchema = Joi.object().keys({
     crust: Joi.string().required(),
-    price: Joi.string().required(),
+    price: Joi.number().required(),
   });
 
   api.post('/', asyncHandler(async (req, res) => {
@@ -27,7 +27,7 @@ export default () => {
           message: unescapeSlashes(result.error.message),
         });
       }
-      const crustFinded = await Crust.findOne({ crust }).lean().exec();
+      const crustFinded = await Crust.findOne({ crust, is_active: true }).lean().exec();
       if (!isEmpty(crustFinded)) {
         // crust already in db
         return res.status(409).json({
@@ -90,9 +90,8 @@ export default () => {
   api.get('/', asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = parseInt(req.query.offset, 10) || 0;
-    const crust = req.query.crust || '';
     try {
-      let response = await Crust.find({ $text: {$search: crust}, is_active: true }).skip(offset).limit(limit).exec();
+      let response = await Crust.find({ is_active: true }).skip(offset).limit(limit).exec();
       if (isEmpty(response)) {
         return res.status(204).json({
           success: true,

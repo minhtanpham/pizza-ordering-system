@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import React, { Component } from 'react';
 import {
   Row,
@@ -6,98 +7,128 @@ import {
   Input,
   Table,
   Button,
+  InputNumber,
+  message,
 } from 'antd';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: () => (
-      <span>
-        <a href="javascript(0)">Delete</a>
-      </span>
-    ),
-  },
-];
+import { createNewToppings, getListToppings, deleteToppings } from '../../services/ToppingsServices';
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-];
+class Sizes extends Component {
+  columns = [
+    {
+      title: 'Topping',
+      dataIndex: 'topping',
+      key: 'topping',
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+    },
+    {
+      title: 'Created Date',
+      dataIndex: 'created_at',
+      key: 'created_at',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Button onClick={() => this.deleteToppings(record)}>Delete</Button>
+      ),
+    },
+  ];
 
-class Topping extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchListToppings = this.fetchListToppings.bind(this);
+    this.state = {
+      listToppings: [],
+    };
+  }
+
+
+  componentDidMount() {
+    this.fetchListToppings();
+  }
+
+  fetchListToppings() {
+    getListToppings(1000, 0).then((res) => {
+      this.setState({ listToppings: _.get(res, 'data.data') });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  deleteToppings(record) {
+    const id = record._id;
+    deleteToppings(id).then(() => {
+      this.fetchListToppings();
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (!err) {
+        createNewToppings(values).then(() => {
+          message.success('Created');
+          this.fetchListToppings();
+        }).catch((error) => {
+          console.log(error);
+        });
+      }
+    });
+  }
+
   render() {
     const { form } = this.props;
+    const { listToppings } = this.state;
     const { getFieldDecorator } = form;
     return (
       <Row>
         <Col span={24}>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <Form.Item label="Name">
-              {getFieldDecorator('thumbnail', {
-                rules: [{ required: true, message: 'Please input your username!' }],
+              {getFieldDecorator('topping', {
+                rules: [{ required: true, message: 'Please input your toppings name!' }],
               })(
                 <Input
-                  placeholder="thumbnail"
+                  placeholder="Toppings"
                 />,
               )}
             </Form.Item>
             <Form.Item label="Price">
-              {getFieldDecorator('thumbnail', {
-                rules: [{ required: true, message: 'Please input your username!' }],
+              {getFieldDecorator('price', {
+                rules: [{ required: true, message: 'Please input topping price!' }],
               })(
-                <Input
-                  placeholder="thumbnail"
+                <InputNumber
+                  type="number"
+                  placeholder="Topping price"
                 />,
               )}
             </Form.Item>
             <Form.Item>
-              <Button type="primary">Create new topping</Button>
+              <Button type="primary" htmlType="submit">Create new topping</Button>
             </Form.Item>
           </Form>
         </Col>
         <Col span={24}>
-          <Table columns={columns} dataSource={data} />
+          <Table rowKey={record => record._id} columns={this.columns} dataSource={listToppings} />
         </Col>
       </Row>
     );
   }
 }
 
-Topping.propTypes = {
+Sizes.propTypes = {
   form: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
 };
 
-export default Form.create({ name: 'topping' })(Topping);
+export default Form.create({ name: 'sizes' })(Sizes);

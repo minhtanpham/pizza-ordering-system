@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: 0 */
 import React, { Component } from 'react';
 import {
   Row,
@@ -6,98 +7,128 @@ import {
   Input,
   Table,
   Button,
+  InputNumber,
+  message,
 } from 'antd';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: () => (
-      <span>
-        <a href="javascript(0)">Delete</a>
-      </span>
-    ),
-  },
-];
+import { createNewCrusts, getListCrusts, deleteCrusts } from '../../services/CrustServices';
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-];
+class Sizes extends Component {
+  columns = [
+    {
+      title: 'Crust',
+      dataIndex: 'crust',
+      key: 'crust',
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+    },
+    {
+      title: 'Created Date',
+      dataIndex: 'created_at',
+      key: 'created_at',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Button onClick={() => this.deleteCrust(record)}>Delete</Button>
+      ),
+    },
+  ];
 
-class Crust extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchListCrusts = this.fetchListCrusts.bind(this);
+    this.state = {
+      listCrusts: [],
+    };
+  }
+
+
+  componentDidMount() {
+    this.fetchListCrusts();
+  }
+
+  fetchListCrusts() {
+    getListCrusts(1000, 0).then((res) => {
+      this.setState({ listCrusts: _.get(res, 'data.data') });
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  deleteCrust(record) {
+    const id = record._id;
+    deleteCrusts(id).then(() => {
+      this.fetchListCrusts();
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (!err) {
+        createNewCrusts(values).then(() => {
+          message.success('Created');
+          this.fetchListCrusts();
+        }).catch((error) => {
+          console.log(error);
+        });
+      }
+    });
+  }
+
   render() {
     const { form } = this.props;
+    const { listCrusts } = this.state;
     const { getFieldDecorator } = form;
     return (
       <Row>
         <Col span={24}>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <Form.Item label="Name">
-              {getFieldDecorator('thumbnail', {
-                rules: [{ required: true, message: 'Please input your username!' }],
+              {getFieldDecorator('crust', {
+                rules: [{ required: true, message: 'Please input your crust name!' }],
               })(
                 <Input
-                  placeholder="thumbnail"
+                  placeholder="Size"
                 />,
               )}
             </Form.Item>
             <Form.Item label="Price">
-              {getFieldDecorator('thumbnail', {
-                rules: [{ required: true, message: 'Please input your username!' }],
+              {getFieldDecorator('price', {
+                rules: [{ required: true, message: 'Please input crust price!' }],
               })(
-                <Input
-                  placeholder="thumbnail"
+                <InputNumber
+                  type="number"
+                  placeholder="Crust price"
                 />,
               )}
             </Form.Item>
             <Form.Item>
-              <Button type="primary">Create new crust</Button>
+              <Button type="primary" htmlType="submit">Create new crust</Button>
             </Form.Item>
           </Form>
         </Col>
         <Col span={24}>
-          <Table columns={columns} dataSource={data} />
+          <Table rowKey={record => record._id} columns={this.columns} dataSource={listCrusts} />
         </Col>
       </Row>
     );
   }
 }
 
-Crust.propTypes = {
+Sizes.propTypes = {
   form: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
 };
 
-export default Form.create({ name: 'crust' })(Crust);
+export default Form.create({ name: 'sizes' })(Sizes);

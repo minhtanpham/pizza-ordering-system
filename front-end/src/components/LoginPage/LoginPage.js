@@ -10,12 +10,9 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import _ from 'lodash';
 import { userLogin } from '../../services/UserServices';
-import { isEmpty } from '../../utils/index';
 import {
   setAccessToken,
   setRefreshToken,
-  getAccessToken,
-  getRefreshToken,
 } from '../../services/TokenServices';
 
 import './LoginPage.css';
@@ -24,13 +21,6 @@ class LoginPage extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  componentDidMount() {
-    const { history } = this.props;
-    if (!isEmpty(getAccessToken) && !isEmpty(getRefreshToken())) {
-      history.push('/dashboard');
-    }
   }
 
   handleSubmit(e) {

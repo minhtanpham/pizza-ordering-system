@@ -120,7 +120,7 @@ class Flavours extends Component {
           </Form>
         </Col>
         <Col span={24}>
-          <Table columns={this.columns} dataSource={listFlavours} />
+          <Table rowKey={record => record._id} columns={this.columns} dataSource={listFlavours} />
         </Col>
       </Row>
     );

@@ -5,7 +5,7 @@ import Joi from '@hapi/joi';
 import _ from 'lodash';
 import 'babel-polyfill';
 
-import ToppingSchema from '../schema/Topping';
+import ToppingSchema from '../schema/Toppings';
 import { isEmpty, unescapeSlashes } from '../utils';
 
 export default () => {
@@ -13,7 +13,7 @@ export default () => {
   const Topping = mongoose.model('Topping', ToppingSchema);
   const CreateToppingJoiSchema = Joi.object().keys({
     topping: Joi.string().required(),
-    price: Joi.string().required(),
+    price: Joi.number().required(),
   });
 
   api.post('/', asyncHandler(async (req, res) => {
@@ -26,7 +26,7 @@ export default () => {
           message: unescapeSlashes(result.error.message),
         });
       }
-      const sizeFinded = await Topping.findOne({ topping }).lean().exec();
+      const sizeFinded = await Topping.findOne({ topping, is_active: true }).lean().exec();
       if (!isEmpty(sizeFinded)) {
         // size already in db
         return res.status(409).json({
@@ -89,9 +89,8 @@ export default () => {
   api.get('/', asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = parseInt(req.query.offset, 10) || 0;
-    const topping = req.query.topping || '';
     try {
-      let response = await Topping.find({ $text: {$search: topping}, is_active: true }).skip(offset).limit(limit).exec();
+      let response = await Topping.find({ is_active: true }).skip(offset).limit(limit).exec();
       if (isEmpty(response)) {
         return res.status(204).json({
           success: true,
