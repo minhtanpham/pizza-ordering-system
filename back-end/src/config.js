@@ -5,8 +5,8 @@ const config = {
   REDIS_DB_URL: '127.0.0.1',
   REDIS_DB_PORT: 6379,
   JWT_REFRESH_TOKEN_SECRET: 'minimalpm@r3freshtok3ntexxt',
-  JWT_TOKEN_LIFE: '1h',
-  JWT_REFRESH_TOKEN_LIFE: '2h',
+  JWT_TOKEN_LIFE: '100h',
+  JWT_REFRESH_TOKEN_LIFE: '200h',
   JWT_SECRET: 'minimalpm@secretl0ngtext',
 };
 
