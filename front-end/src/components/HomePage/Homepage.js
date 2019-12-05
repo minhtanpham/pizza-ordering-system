@@ -21,6 +21,7 @@ import { getListSizes } from '../../services/SizeServices';
 import { getListCrusts } from '../../services/CrustServices';
 import { getListToppings } from '../../services/ToppingsServices';
 import { getListPizzas } from '../../services/PizzaServices';
+import { createNewOrder } from '../../services/OrderServices';
 
 const { Header, Content, Footer } = Layout;
 
@@ -28,6 +29,7 @@ class HomePage extends Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.placeOrder = this.placeOrder.bind(this);
     this.state = {
       pizza: [],
       flavours: [],
@@ -61,30 +63,50 @@ class HomePage extends Component {
     });
   }
 
-  handleSubmit(e) {
-    const { form } = this.props;
+  placeOrder(flavour, size, crust, topping, price) {
     const {
       flavours,
       sizes,
       crusts,
       toppings,
     } = this.state;
+    let data = {};
+    if (!price || price === 0) {
+      // place from custom form
+      data = {
+        flavour: flavours.filter(item => item._id === flavour)[0],
+        size: sizes.filter(item => item._id === size)[0],
+        crust: crusts.filter(item => item._id === crust)[0],
+        topping: toppings.filter(item => item._id === topping)[0],
+        price: 0,
+      };
+      data.price = (parseInt(data.flavour.price, 10)
+      + parseInt(data.size.price, 10)
+      + parseInt(data.crust.price, 10)
+      + parseInt(_.get(data, 'topping.price', 0), 10)).toString();
+    } else {
+      // place from pizza order
+      data = {
+        flavour: flavours.filter(item => item._id === flavour._id)[0],
+        size: sizes.filter(item => item._id === size._id)[0],
+        crust: crusts.filter(item => item._id === crust._id)[0],
+        topping: toppings.filter(item => item._id === topping._id)[0],
+        price,
+      };
+    }
+    createNewOrder(data).then(() => {
+      message.success('Created!');
+    }).catch(() => {
+      message.success('Failed to place order!');
+    });
+  }
+
+  handleSubmit(e) {
     e.preventDefault();
+    const { form } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
-        const data = {
-          thumbnail: values.thumbnail,
-          flavour: flavours.filter(item => item._id === values.flavours)[0],
-          size: sizes.filter(item => item._id === values.sizes)[0],
-          crust: crusts.filter(item => item._id === values.crusts)[0],
-          topping: toppings.filter(item => item._id === values.toppings)[0],
-          price: 0,
-        };
-        data.price = (parseInt(data.flavour.price, 10)
-          + parseInt(data.size.price, 10)
-          + parseInt(data.crust.price, 10)
-          + parseInt(_.get(data, 'topping.price', 0), 10)).toString();
-        console.log(data);
+        this.placeOrder(values.flavours, values.sizes, values.crusts, values.toppings);
       }
     });
   }
@@ -124,7 +146,7 @@ class HomePage extends Component {
                 ) : (
                   <Col span={12} className="list-card-pizza">
                     {
-                      pizza.map(item => <PizzaCard thumbnail={item.thumbnail} flavours={item.flavour.flavour} sizes={item.size.size} crusts={item.crust.crust} toppings={_.get(item, 'topping.topping', '')} price={item.price} />)
+                      pizza.map(item => <PizzaCard key={item._id} thumbnail={item.thumbnail} flavour={item.flavour} size={item.size} crust={item.crust} topping={_.get(item, 'topping', {})} price={item.price} placeOrder={this.placeOrder} />)
                     }
                   </Col>
                 )

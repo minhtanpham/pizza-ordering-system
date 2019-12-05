@@ -9,11 +9,12 @@ import './pizzacard.css';
 
 const PizzaCard = ({
   thumbnail,
-  flavours,
-  sizes,
-  crusts,
-  toppings,
+  flavour,
+  size,
+  crust,
+  topping,
   price,
+  placeOrder,
 }) => (
   <Card className="pizza-card">
     <div
@@ -25,28 +26,28 @@ const PizzaCard = ({
     <ul className="meta-list">
       <li>
         <span className="heading">Flavours: </span>
-        <span>{flavours}</span>
+        <span>{flavour.flavour}</span>
       </li>
       <li>
         <span className="heading">Size: </span>
         <span>
-          {sizes}
+          {size.size}
         </span>
       </li>
       <li>
         <span className="heading">Crust: </span>
         <span>
-          {crusts}
+          {crust.crust}
         </span>
       </li>
       <li>
         <span className="heading">Toppings: </span>
         <span>
-          {toppings}
+          {topping.topping}
         </span>
       </li>
     </ul>
-    <Button className="order-button" type="primary">
+    <Button className="order-button" type="primary" onClick={() => placeOrder(flavour, size, crust, topping, price)}>
       { `Price (${price}$)` }
     </Button>
   </Card>
@@ -54,11 +55,12 @@ const PizzaCard = ({
 
 PizzaCard.propTypes = {
   thumbnail: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  flavours: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  sizes: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  crusts: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  toppings: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  flavour: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  crust: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  topping: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   price: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  placeOrder: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
 };
 
 export default PizzaCard;

@@ -7,17 +7,17 @@ import 'babel-polyfill';
 
 import OrderSchema from '../schema/Order';
 import { isEmpty, unescapeSlashes } from '../utils';
+import { checkToken } from '../middlewares/index';
 
 export default () => {
   let api = Router();
   const Order = mongoose.model('Order', OrderSchema);
   const CreateOrderJoiSchema = Joi.object().keys({
-    name: Joi.string().required(),
     flavour: Joi.object().required(),
     size: Joi.object().required(),
     crust: Joi.object().required(),
     topping: Joi.object(),
-    price: Joi.object().required(),
+    price: Joi.string().required(),
   });
 
   api.post('/', asyncHandler(async (req, res) => {
@@ -60,7 +60,7 @@ export default () => {
   }));
 
   // get detail of single order
-  api.get('/:orderid', asyncHandler(async (req, res) => {
+  api.get('/:orderid', checkToken, asyncHandler(async (req, res) => {
     const order_id = req.params.orderid;
     try {
       let response = await Order.find({ _id: order_id, is_active: true }).exec();
@@ -85,7 +85,7 @@ export default () => {
   }));
 
   // get detail of all order
-  api.get('/', asyncHandler(async (req, res) => {
+  api.get('/', checkToken, asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = parseInt(req.query.offset, 10) || 0;
     try {

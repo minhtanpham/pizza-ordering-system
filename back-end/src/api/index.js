@@ -7,6 +7,7 @@ import flavours from './flavours';
 import sizes from './size';
 import crusts from './crust';
 import toppings from './toppings';
+import orders from './order';
 import pizza from './pizza';
 
 export default (redisClient) => {
@@ -23,6 +24,7 @@ export default (redisClient) => {
   api.use('/toppings', toppings(redisClient));
   api.use('/pizzas', pizza(redisClient));
   api.use('/sizes', sizes(redisClient));
+  api.use('/orders', orders(redisClient));
   api.use('/user', user());
 
   return api;

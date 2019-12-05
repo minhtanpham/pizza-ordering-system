@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const OrderSchema = new Schema({
   name: { type: String, required: false },
-  flavours: { type: Object, required: true },
+  flavour: { type: Object, required: true },
   size: { type: Object, required: true },
   crust: { type: Object, required: true },
   topping: { type: Object, required: false },
